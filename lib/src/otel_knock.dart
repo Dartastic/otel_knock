@@ -1,13 +1,13 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the MIT License.
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_knock_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_knock';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class KnockResult {
   const KnockResult({
@@ -87,68 +87,68 @@ Future<T> tracedKnock<T>({
   final span = _tracer().startSpan(
     'knock $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
     if (r.result != null) {
       final extras = <Attribute<Object>>[];
       if (r.result!.workflowKey != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'knock.workflow.key',
           r.result!.workflowKey!,
         ));
       }
       if (r.result!.tenantId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'knock.tenant.id',
           r.result!.tenantId!,
         ));
       }
       if (r.result!.recipientCount != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'knock.recipient_count',
           r.result!.recipientCount!,
         ));
       }
       if (r.result!.channelTypes != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'knock.channel.types',
           r.result!.channelTypes!,
         ));
       }
       if (r.result!.environment != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'knock.environment',
           r.result!.environment!,
         ));
       }
       if (r.result!.batchKey != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'knock.batch.key',
           r.result!.batchKey!,
         ));
       }
       if (r.result!.cancellationKey != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'knock.cancellation.key',
           r.result!.cancellationKey!,
         ));
       }
       if (r.result!.scheduled != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'knock.scheduled',
           r.result!.scheduled!,
         ));
       }
       if (r.result!.requestId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'knock.request.id',
           r.result!.requestId!,
         ));
       }
       if (r.result!.statusCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'http.response.status_code',
           r.result!.statusCode!,
         ));
@@ -159,13 +159,13 @@ Future<T> tracedKnock<T>({
           );
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
